@@ -3,7 +3,7 @@ from django.shortcuts import render, redirect
 from django.urls import reverse_lazy, reverse
 from django.views import generic
 from django.contrib.auth.mixins import LoginRequiredMixin
-from .forms import DriverLicenseUpdateForm, DriverCreateForm, CarForm
+from .forms import DriverCreateForm, CarForm, DriverLicenseUpdateForm
 from .models import Driver, Car, Manufacturer
 
 
@@ -69,10 +69,16 @@ class CarDetailView(LoginRequiredMixin, generic.DetailView):
             car.drivers.add(request.user)
         return redirect(reverse("taxi:car-detail", kwargs={"pk": car.pk}))
 
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        car = self.object
+        user = self.request.user
+        context["is_driver"] = car.drivers.filter(id=user.id).exists()
+        return context
+
 
 class CarCreateView(LoginRequiredMixin, generic.CreateView):
     model = Car
-    # fields = "__all__"
     success_url = reverse_lazy("taxi:car-list")
     form_class = CarForm
 
@@ -95,8 +101,6 @@ class DriverListView(LoginRequiredMixin, generic.ListView):
 
 class DriverDetailView(LoginRequiredMixin, generic.DetailView):
     model = Driver
-    queryset = Driver.objects.all().prefetch_related("cars__manufacturer")
-
 
 class DriverCreateView(LoginRequiredMixin, generic.CreateView):
     model = Driver

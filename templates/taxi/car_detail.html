@@ -5,7 +5,7 @@
     {{ car.model }}
     <form method="post" action="{% url 'taxi:car-detail' pk=car.id %}">
       {% csrf_token %}
-      {% if user in car.drivers.all %}
+      {% if is_driver %}
         <button type="submit" class="btn btn-danger link-to-page">Delete me from this car</button>
       {% else %}
         <button type="submit" class="btn btn-primary link-to-page">Assign me to this car</button>

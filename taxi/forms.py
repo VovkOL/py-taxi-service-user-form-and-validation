@@ -7,8 +7,7 @@ from django.core.validators import RegexValidator
 from taxi.models import Driver, Car
 
 
-class DriverLicenseUpdateForm(forms.ModelForm):
-    license_number = forms.CharField(
+license_number = forms.CharField(
         max_length=8,
         validators=[
             RegexValidator(
@@ -22,13 +21,17 @@ class DriverLicenseUpdateForm(forms.ModelForm):
         help_text="Format: 3 uppercase letters followed by 5 digits.",
     )
 
-    class Meta:
+
+class DriverLicenseUpdateForm(forms.ModelForm):
+    license_number = license_number
+    class Meta(UserCreationForm.Meta):
         model = Driver
         fields = ("license_number",)
 
 
-class DriverCreateForm(UserCreationForm, DriverLicenseUpdateForm):
 
+class DriverCreateForm(UserCreationForm):
+    license_number = license_number
     class Meta(UserCreationForm.Meta):
         model = Driver
         fields = UserCreationForm.Meta.fields + ("first_name", "last_name", "email", "license_number")
@@ -36,7 +39,7 @@ class DriverCreateForm(UserCreationForm, DriverLicenseUpdateForm):
 
 class CarForm(forms.ModelForm):
     drivers = forms.ModelMultipleChoiceField(
-        queryset=get_user_model().objects.all(),
+        queryset=Driver.objects.all(),
         widget=forms.CheckboxSelectMultiple,
         required=False,
     )
