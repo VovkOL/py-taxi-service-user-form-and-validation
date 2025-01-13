@@ -16,12 +16,12 @@ license_number = forms.CharField(
                     " uppercase letters followed by 5 digits."
         )
     ],
-widget=forms.TextInput(
-    attrs={"placeholder": "Enter your license number"}
-),
-required=True,
-label="License Number",
-help_text="Format: 3 uppercase letters followed by 5 digits.",
+    widget=forms.TextInput(
+        attrs={"placeholder": "Enter your license number"}
+    ),
+    required=True,
+    label="License Number",
+    help_text="Format: 3 uppercase letters followed by 5 digits.",
 )
 
 
